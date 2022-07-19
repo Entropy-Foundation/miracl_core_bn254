@@ -1,0 +1,14 @@
+[package]
+name = "miracl_core_bn254"
+version = "0.1.0"
+edition = "2021"
+
+authors = ["David Yang <y.yang@supra.org>"]
+documentation = "https://github.com/miracl/core"
+repository = "https://github.com/Entropy-Foundation/miracl_core_bn254"
+description = "Apache MIRACL (https://github.com/miracl/core) Rust implementation of Ed25519"
+license = "Apache-2.0"
+include = ["src", "Cargo.toml", "LICENSE"]
+
+[dependencies]
+miracl_core_bls12381 = "4.1.2"

@@ -1822,3 +1822,26 @@ CAHCZF */
         G
     }
 }
+
+#[cfg(test)]
+mod test {
+    use crate::bn254::pair;
+    use super::*;
+
+    #[test]
+    fn ecp_g1mul_r() {
+        let g = ECP::generator();
+        let r = BIG::new_ints(&rom::CURVE_ORDER);
+        let g_mul_r = pair::g1mul(&g, &r);
+        assert!(g_mul_r.is_infinity());
+    }
+
+    #[test]
+    fn ecp_mul_r() {
+        let g = ECP::generator();
+        let r = BIG::new_ints(&rom::CURVE_ORDER);
+        let g_mul_r = g.mul(&r);
+        assert!(g_mul_r.is_infinity());
+    }
+
+}

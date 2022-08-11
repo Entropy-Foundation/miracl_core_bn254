@@ -821,5 +821,30 @@ impl FP {
         r.cmove(&nr,sgn);
         r
     }
+}
 
+#[cfg(test)]
+mod test {
+    use crate::bn254::rom;
+    use super::*;
+
+    #[test]
+    fn test_sqrt() {
+        let r = FP::new_big(&BIG::new_ints(&rom::CURVE_ORDER));
+        let mut r2 = r.clone();
+        r2.sqr();
+        r2 = r2.sqrt(None);
+        r2.neg();
+        assert!(r2.equals(&r));
+    }
+
+    #[test]
+    fn test_sqrtm3() {
+        let sqrtm3 = &BIG::new_ints(&rom::SQRTM3);
+
+        let mut t = FP::new_big(&BIG::new_int(3));
+        t.neg();
+        t = t.sqrt(None);
+        assert!(t.equals(&FP::new_big(&sqrtm3)));
+    }
 }

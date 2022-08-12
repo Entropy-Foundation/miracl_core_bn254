@@ -997,3 +997,38 @@ CAHCZF */
         )
     }
 }
+
+#[cfg(test)]
+mod test {
+    use crate::bn254::big::MODBYTES;
+    use super::*;
+
+    #[test]
+    fn test_mul_r() {
+        let g = ECP2::generator();
+        let r = BIG::new_ints(&rom::CURVE_ORDER);
+        let g_mul_r = g.mul(&r);
+        assert!(g_mul_r.is_infinity());
+    }
+
+    fn test_serde_compressed(pp: &ECP2) {
+        let mut bytes = [0; MODBYTES * 2 + 1];
+        pp.tobytes(&mut bytes, true);
+        let qq = ECP2::frombytes(&bytes);
+        assert!(pp.equals(&qq));
+    }
+
+    fn test_serde_uncompressed(pp: &ECP2) {
+        let mut bytes = [0; MODBYTES * 4 + 1];
+        pp.tobytes(&mut bytes, false);
+        let qq = ECP2::frombytes(&bytes);
+        assert!(pp.equals(&qq));
+    }
+
+    #[test]
+    fn test_serde_g() {
+        let g = ECP2::generator();
+        test_serde_compressed(&g);
+        test_serde_uncompressed(&g);
+    }
+}

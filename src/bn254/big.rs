@@ -1069,6 +1069,7 @@ impl BIG {
 
 #[cfg(test)]
 mod test {
+    use miracl_core_bls12381::rand::RAND_impl;
     use crate::bn254::rom;
     use super::*;
 
@@ -1094,10 +1095,21 @@ mod test {
         let r2modp = &BIG::new_ints(&rom::R2MODP);
         let mut t = BIG::new_int(1);
         let two = BIG::new_int(2);
-        for _ in 0..(254+26) {
+        for _ in 0..(254 + 26) {
             t = BIG::modmul(&t, &two, &p);
         }
         t = BIG::modsqr(&t, &p);
         assert_eq!(BIG::comp(&t, &r2modp), 0);
+    }
+
+    #[test]
+    fn test_serde() {
+        let mut rng = RAND_impl::new();
+        let p = BIG::new_ints(&rom::MODULUS);
+        let x = BIG::randomnum(&p, &mut rng);
+        let mut bytes = [0; MODBYTES];
+        x.tobytes(&mut bytes);
+        let y = BIG::frombytes(&bytes);
+        assert_eq!(BIG::comp(&x, &y), 0);
     }
 }

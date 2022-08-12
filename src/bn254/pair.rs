@@ -1036,3 +1036,18 @@ pub fn gtmember(m: &FP12) -> bool {
     } */
     true
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_gt_pow_r() {
+        let g1 = ECP::generator();
+        let g2 = ECP2::generator();
+        let g = fexp(&ate(&g2, &g1));
+        let r = BIG::new_ints(&rom::CURVE_ORDER);
+        let g_mul_r = g.pow(&r);
+        assert!(g_mul_r.isunity());
+    }
+}

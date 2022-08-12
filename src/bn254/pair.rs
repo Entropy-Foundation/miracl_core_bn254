@@ -1039,15 +1039,51 @@ pub fn gtmember(m: &FP12) -> bool {
 
 #[cfg(test)]
 mod test {
+    use miracl_core_bls12381::rand::RAND_impl;
     use super::*;
 
     #[test]
     fn test_gt_pow_r() {
         let g1 = ECP::generator();
+        assert!(g1member(&g1));
         let g2 = ECP2::generator();
+        assert!(g2member(&g2));
         let g = fexp(&ate(&g2, &g1));
+        assert!(gtmember(&g));
         let r = BIG::new_ints(&rom::CURVE_ORDER);
         let g_mul_r = g.pow(&r);
         assert!(g_mul_r.isunity());
+    }
+
+    #[test]
+    fn test_glv() {
+        let g = ECP::generator();
+        let r = BIG::new_ints(&rom::CURVE_ORDER);
+        let mut rng = RAND_impl::new();
+        let x = BIG::randomnum(&r, &mut rng);
+
+        let res1 = g1mul(&g, &x);
+        let mut res2 = g.mul(&x);
+        res2.affine();
+        assert!(res1.equals(&res2));
+    }
+
+    #[test]
+    fn test_glv_cru() {
+        let g = ECP::generator();
+        let mut lambda = BIG::new_ints(&rom::CURVE_BNX);
+        let r = BIG::new_ints(&rom::CURVE_ORDER);
+        lambda = lambda.powmod(&BIG::new_int(4), &r);
+        lambda.imul(36);
+        lambda.sub(&BIG::new_int(1));
+        lambda.rmod(&r);
+
+        let mut res = g.mul(&lambda);
+        res.affine();
+        assert!(g.getpy().equals(&res.getpy()));
+
+        let mut cru = FP::new_big(&BIG::new_ints(&rom::CRU));
+        cru.mul(&g.getpx());
+        assert!(res.getpx().equals(&cru));
     }
 }

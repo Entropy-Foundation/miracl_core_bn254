@@ -1162,4 +1162,18 @@ mod test {
         res2.affine();
         assert!(res2.equals(&g_frob));
     }
+
+    #[test]
+    fn test_gt_gs() {
+        let g1 = ECP::generator();
+        let g2 = ECP2::generator();
+        let g = fexp(&ate(&g2, &g1));
+        let r = BIG::new_ints(&rom::CURVE_ORDER);
+        let mut rng = RAND_impl::new();
+        let x = BIG::randomnum(&r, &mut rng);
+
+        let res1 = gtpow(&g, &x);
+        let res2 = g.pow(&x);
+        assert!(res1.equals(&res2));
+    }
 }
